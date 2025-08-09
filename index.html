@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Perfect Freehand Example</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+    }
+    canvas {
+      display: block;
+      background: #fff;
+      width: 100vw;
+      height: 100vh;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script type="module">
+    import { getStroke } from 'https://cdn.skypack.dev/perfect-freehand';
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let allStrokes = [];
+    let points = [];
+    let drawing = false;
+
+    canvas.addEventListener('pointerdown', e => {
+      drawing = true;
+      points = [[e.clientX, e.clientY]];
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      if (!drawing) return;
+      points.push([e.clientX, e.clientY]);
+      redraw();
+    });
+
+    canvas.addEventListener('pointerup', () => {
+      if (points.length) {
+        allStrokes.push([...points]);
+      }
+      points = [];
+      drawing = false;
+      redraw();
+    });
+
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      allStrokes.forEach(strokePoints => {
+        drawStroke(strokePoints);
+      });
+
+      if (points.length) {
+        drawStroke(points);
+      }
+    }
+
+    function drawStroke(pts) {
+      const stroke = getStroke(pts, {
+        size: 16,
+        thinning: 0.6,
+        smoothing: 0.5,
+        streamline: 0.5
+      });
+
+      ctx.fillStyle = 'black';
+      ctx.beginPath();
+      if (stroke.length > 0) {
+        ctx.moveTo(stroke[0][0], stroke[0][1]);
+        for (const [x, y] of stroke) {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+  </script>
+</body>
+</html>
