@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Icon Selection Screen -->
+  <div class="start-screen" id="start-screen">
+    <div class="icon-grid">
+      <div class="icon-option" data-icon="😀">😀</div>
+      <div class="icon-option" data-icon="😎">😎</div>
+      <div class="icon-option" data-icon="🤖">🤖</div>
+      <div class="icon-option" data-icon="👾">👾</div>
+      <div class="icon-option" data-icon="🦄">🦄</div>
+      <div class="icon-option" data-icon="🐱">🐱</div>
+      <div class="icon-option" data-icon="🐶">🐶</div>
+      <div class="icon-option" data-icon="🐼">🐼</div>
+      <div class="icon-option" data-icon="🦊">🦊</div>
+      <div class="icon-option" data-icon="🐸">🐸</div>
+      <div class="icon-option" data-icon="🐙">🐙</div>
+      <div class="icon-option" data-icon="🦋">🦋</div>
+    </div>
+    <button class="join-btn" id="join-btn" disabled>▶️</button>
+  </div>
+
+  <!-- Waiting Room Screen -->
+  <div class="waiting-screen" id="waiting-screen">
+    <div class="players-waiting" id="players-waiting"></div>
+    <button class="start-btn" id="start-btn" disabled>▶️</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="game-screen" id="game-screen">
+    <div class="game-header">
+      <div class="game-status" id="game-status">🎮</div>
+      <div class="timer-bar" id="timer-bar">⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜</div>
+    </div>
+    <div class="players-bar" id="players-bar">
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script type="module" src="draw.js"></script>
+</body>
+</html>
