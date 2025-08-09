@@ -1,47 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Collaborative Drawing Canvas</title>
-<style>
-  body {
-    margin: 0; padding: 0;
-    display: flex; flex-direction: column;
-    height: 100vh;
-  }
-  #controls {
-    display: flex; gap: 1rem;
-    background: #eee; padding: 0.5rem;
-    align-items: center;
-  }
-  #connection-status {
-    font-weight: bold;
-    margin-left: auto;
-  }
-  canvas {
-    flex: 1;
-    background: #fff;
-    cursor: crosshair;
-  }
-  label {
-    font-size: 0.9rem;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Collaborative Drawing Canvas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f7;
+    }
+
+    #main-layout {
+      display: flex;
+      flex: 1;
+      height: 100vh;
+    }
+
+    #left-controls, #right-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      background: #fff;
+      width: 180px;
+      user-select: none;
+    }
+
+    #left-controls {
+      border-right: 1px solid #ddd;
+      width: 240px;
+    }
+
+    #right-controls {
+      border-left: 1px solid #ddd;
+      align-items: center;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 0; 
+    }
+
+    .slider-icon {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    input[type="range"] {
+      flex: 1;
+    }
+
+    .color-row {
+      display: flex;
+      justify-content: center;
+      padding-top: 8px;
+    }
+
+    input[type="color"] {
+      width: 36px;
+      height: 36px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .icon-button img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    #connection-status {
+      font-weight: 700;
+      color: #28a745;
+      margin-top: 1rem;
+    }
+
+    #canvas-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #e6e6e6;
+      padding: 1rem;
+    }
+
+    canvas {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      max-width: 90vw;
+      max-height: 80vh;
+      width: 640px;
+      height: 480px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      cursor: crosshair;
+    }
+  </style>
 </head>
 <body>
-  <div id="controls">
-    <label>Size: <input type="range" id="size" min="1" max="50" step="1" value="16"></label>
-    <label>Thinning: <input type="range" id="thinning" min="-1" max="1" step="0.01" value="0.6"></label>
-    <label>Smoothing: <input type="range" id="smoothing" min="0" max="1" step="0.01" value="0.8"></label>
-    <label>Streamline: <input type="range" id="streamline" min="0" max="1" step="0.01" value="0.5"></label>
-    <label>Color: <input type="color" id="color" value="#000000"></label>
-    <button id="undo">Undo</button>
-    <button id="redo">Redo</button>
-    <button id="clear">Clear</button>
-    <span id="connection-status">Connecting...</span>
+  <div id="main-layout">
+    <div id="left-controls">
+      <div class="slider-row">
+        <img src="small.png" alt="Small" class="slider-icon">
+        <input type="range" id="size" min="1" max="50" step="1" value="16">
+        <img src="large.png" alt="Large" class="slider-icon">
+      </div>
+
+      <div class="slider-row">
+        <img src="thin.png" alt="Thin" class="slider-icon">
+        <input type="range" id="thinning" min="-1" max="1" step="0.01" value="0.6">
+        <img src="thick.png" alt="Thick" class="slider-icon">
+      </div>
+
+      <div class="slider-row">
+        <img src="rough.png" alt="Rough" class="slider-icon">
+        <input type="range" id="smoothing" min="0" max="1" step="0.01" value="0.8">
+        <img src="smooth.png" alt="Smooth" class="slider-icon">
+      </div>
+
+      <div class="slider-row">
+        <img src="notStreamline.png" alt="Not Streamlined" class="slider-icon">
+        <input type="range" id="streamline" min="0" max="1" step="0.01" value="0.5">
+        <img src="streamlined.png" alt="Streamlined" class="slider-icon">
+      </div>
+
+      <div class="color-row">
+        <input type="color" id="color" value="#000000">
+      </div>
+    </div>
+
+    <div id="canvas-container">
+      <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+
+    <div id="right-controls">
+      <button id="undo" class="icon-button">
+        <img src="undo.png" alt="Undo">
+      </button>
+      <button id="redo" class="icon-button">
+        <img src="redo.png" alt="Redo">
+      </button>
+      <button id="clear" class="icon-button">
+        <img src="clear.png" alt="Clear">
+      </button>
+      <span id="connection-status">Connected</span>
+    </div>
   </div>
 
-  <canvas id="canvas"></canvas>
   <script type="module" src="draw.js"></script>
 </body>
 </html>

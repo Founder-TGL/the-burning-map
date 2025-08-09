@@ -117,16 +117,29 @@ document.getElementById('clear').addEventListener('click', () => {
     sendDrawingData('clear', {});
 });
 
+function getCanvasCoordinates(event) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY
+  };
+}
+
 canvas.addEventListener('pointerdown', e => {
-    drawing = true;
-    points = [[e.clientX, e.clientY]];
+  drawing = true;
+  const { x, y } = getCanvasCoordinates(e);
+  points = [[x, y]];
 });
 
 canvas.addEventListener('pointermove', e => {
-    if (!drawing) return;
-    points.push([e.clientX, e.clientY]);
-    redraw();
+  if (!drawing) return;
+  const { x, y } = getCanvasCoordinates(e);
+  points.push([x, y]);
+  redraw();
 });
+
 
 canvas.addEventListener('pointerup', () => {
     if (points.length) {
